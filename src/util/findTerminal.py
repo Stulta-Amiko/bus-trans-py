@@ -7,7 +7,7 @@ def find(text):
     if(departSearch == 0):
         return 0
 
-    f = open('./data/Express_Bus_Route_Detailed.csv','r')
+    f = open('src/data/Express_Bus_Route_Detailed.csv','r')
     rdr = csv.reader(f)
     result = []
 
@@ -15,7 +15,7 @@ def find(text):
         if not(line[2] in result):
             result.append(line[2])
 
-    f = open('./data/Intercity_Bus_Route_Detailed.csv','r')
+    f = open('src/data/Intercity_Bus_Route_Detailed.csv','r')
     rdr = csv.reader(f)
 
     for line in rdr:
