@@ -2,10 +2,7 @@ import csv
 
 
 def find(text):
-    departSearch = input(text + "지를 입력해 주세요.\n")
-
-    if(departSearch == 0):
-        return 0
+    departSearch = text
 
     f = open('src/data/Express_Bus_Route_Detailed.csv','r')
     rdr = csv.reader(f)

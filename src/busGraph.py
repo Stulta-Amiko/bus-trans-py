@@ -4,68 +4,68 @@ import csv
 import os
 from datetime import datetime
 import time
-from util import findTerminal
 
-if not (os.path.isdir('src/data')):
-    os.makedirs('src/data/graph')
-elif not(os.path.isdir('src/data/graph')):
-    os.mkdir('src/data/graph')
+#절대경로로 디렉토리 전부 바꾸기 
 
-if not(os.path.isfile('src/data/graph/busGraph.edgelist')):
-    G = nx.Graph() 
-    f = open('src/data/Express_Bus_Route_Detailed.csv','r')
-    rdr = csv.reader(f)
+def trans(depTmn,arrTmn,depHour,depMin):
+    if not (os.path.isdir('src/data')):
+        os.makedirs('src/data/graph')
+    elif not(os.path.isdir('src/data/graph')):
+        os.mkdir('src/data/graph')
 
-    firstPass = 0
+    if not(os.path.isfile('src/data/graph/busGraph.edgelist')):
+        G = nx.Graph() 
+        f = open('src/data/Express_Bus_Route_Detailed.csv','r')
+        rdr = csv.reader(f)
 
-    for line in rdr:
+        firstPass = 0
 
-        if firstPass == 0:
-            firstPass += 1
-        else:
-            G.add_edge(line[2],line[4],weight=int(line[5]),relation='express')  
+        for line in rdr:
 
-
-    f = open('src/data/Intercity_Bus_Route_Detailed.csv','r')
-    rdr = csv.reader(f)
-    
-    firstPass = 0
-
-    for line in rdr:
-
-        if firstPass == 0:
-            firstPass += 1
-        else:
-            G.add_edge(line[2],line[4],weight=int(line[5]),relation='intercity')  
+            if firstPass == 0:
+                firstPass += 1
+            else:
+                G.add_edge(line[2],line[4],weight=int(line[5]),relation='express')  
 
 
-    f.close()
+        f = open('src/data/Intercity_Bus_Route_Detailed.csv','r')
+        rdr = csv.reader(f)
+        
+        firstPass = 0
 
-    nx.write_weighted_edgelist(G,'src/data/graph/busGraph.edgelist')
-else:
-    G = nx.read_weighted_edgelist('src/data/graph/busGraph.edgelist')
+        for line in rdr:
 
-weight = nx.get_edge_attributes(G, 'weight')
-relation = nx.get_edge_attributes(G, 'relation')
+            if firstPass == 0:
+                firstPass += 1
+            else:
+                G.add_edge(line[2],line[4],weight=int(line[5]),relation='intercity')  
 
-exitcode = 1
 
-print('종료하시려면 출/도착지 입력시 0을 눌러주세요')
+        f.close()
 
-def peek(iterable):
-    try:
-        first = next(iterable)
-    except StopIteration:
-        return 0
-    return 1
-    
-def csvlen(reader):
-    csvindex = 0
-    for item in reader:
-        csvindex += 1
-    return csvindex
+        nx.write_weighted_edgelist(G,'src/data/graph/busGraph.edgelist')
+    else:
+        G = nx.read_weighted_edgelist('src/data/graph/busGraph.edgelist')
 
-while(exitcode == 1):
+    weight = nx.get_edge_attributes(G, 'weight')
+    relation = nx.get_edge_attributes(G, 'relation')
+
+    exitcode = 1
+
+    def peek(iterable):
+        try:
+            first = next(iterable)
+        except StopIteration:
+            return 0
+        return 1
+        
+    def csvlen(reader):
+        csvindex = 0
+        for item in reader:
+            csvindex += 1
+        return csvindex
+
+    #while(exitcode == 1):
 
     nowHour = 0#datetime.now.hour
     nowMin = 0#datetime.now.minute
@@ -79,16 +79,12 @@ while(exitcode == 1):
 
 
     cutoff = 0
-    
-    depart = findTerminal.find('출발')
-    if depart == 0:
-        exitcode = 0
-    arrive = findTerminal.find('도착')
-    if arrive == 0:
-        exitcode = 0
 
-    path = nx.all_shortest_paths(G, depart, arrive, weight='weight')
-    length = nx.dijkstra_path_length(G,depart, arrive, weight='weight')
+    depart = depTmn
+    arrive = arrTmn
+
+    # 터미널 찾는 코드는 이후 데이터베이스로 이관후 거기서 찾아오는 코드 만들 예정 
+
     simplePath = nx.all_simple_paths(G,depart,arrive,cutoff=cutoff)
     print(peek(simplePath))
     while not peek(simplePath):
@@ -101,11 +97,11 @@ while(exitcode == 1):
     if cutoff < 2:
         cutoff += 1
         
-    simplePath = nx.all_simple_paths(G,depart,arrive,cutoff=cutoff)
+    simplePath = nx.all_simple_paths(G,depart,arrive,cutoff=cutoff) # 전체경로 찾기 cutoff 중에서 
 
     result = list()
 
-    for item in simplePath:
+    for item in simplePath: # networkx 이용해서 총 가중치 구하는 코드
         routeindex = 0
         totalweight = 0
         route = list()
@@ -122,7 +118,7 @@ while(exitcode == 1):
             route.append(trip)
         result.append(route)
 
-    
+
     result = sorted(result,key=lambda triptime: triptime[0])
 
     modifiedResult = list()
@@ -156,35 +152,35 @@ while(exitcode == 1):
                         f2 = open('src/data/exp_each/'+item[routeindex]+'/'+item[routeindex+1]+'_TimeTable.csv','r+')
                         busType = '고속'
 
-                    rdr = csv.reader(f)
-                    rdr2 = csv.reader(f2)
+                    rdr = csv.reader(f) # csv 파일의 eof 를 판단하기 위한 reader
                     listcsv = list(rdr)
                     csvindex = len(listcsv) 
                     
+                    rdr2 = csv.reader(f2) # 파일 읽기를 위한 reader
 
                     if csvindex < 2:
-                        print('no timetable')
+                        print('no timetable') # 헤더만 있는경우 추가가중치를 고의적으로 많이줘서 탈락시키기
                         print(item[routeindex]+','+item[routeindex+1])
                         addweight += 7000
                         break
 
                     for line in rdr2:
                         if csvheaderPass < 1:
-                            csvheaderPass += 1
+                            csvheaderPass += 1 # csv 헤더 패스 
                         else:
-                            if routeindex < 2:
+                            if routeindex < 2: # 첫 출발일 경우
                                 if int(line[3]) > nowHour or (int(line[3]) ==  nowHour and int(line[4]) > nowMin):
                                     arrHour = int(line[7])
                                     arrMin = int(line[8])
                                     routeindex += 1
-                                    timetableList.append(line[3])
-                                    timetableList.append(line[4])
-                                    timetableList.append(line[7])
-                                    timetableList.append(line[8])
-                                    timetableList.append(busType)
+                                    timetableList.append(line[3]) # 출발 시간
+                                    timetableList.append(line[4]) # 출발 분
+                                    timetableList.append(line[7]) # 도착 시간
+                                    timetableList.append(line[8]) # 도착 분
+                                    timetableList.append(busType) # 버스 타입(시외, 고속)
                                     break
 
-                            else:
+                            else: # 그 외 두번째 이후의 출발일 경우 
                                 eofdetect += 1
                                 if eofdetect > 50:
                                     print('eof detected')
@@ -192,24 +188,24 @@ while(exitcode == 1):
                                     addweight += 7000
                                     break
                                 if int(line[3]) > arrHour or (int(line[3]) ==  arrHour and int(line[4]) > arrMin):
-                                    addweight += (int(line[3]) - arrHour)*60 + int(line[4]) - arrMin
-                                    arrHour = int(line[7])
-                                    arrMin = int(line[8])
-                                    routeindex += 1
-                                    timetableList.append(line[3])
-                                    timetableList.append(line[4])
-                                    timetableList.append(line[7])
-                                    timetableList.append(line[8])
-                                    timetableList.append(busType)
+                                    addweight += (int(line[3]) - arrHour)*60 + int(line[4]) - arrMin # 추가 가중치 계산
+                                    arrHour = int(line[7]) # 환승대기 가중치 계산을 위한 도착 시간 저장
+                                    arrMin = int(line[8]) 
+                                    routeindex += 1 # 다음 여정으로 넘기기 
+                                    timetableList.append(line[3]) # 출발 시간
+                                    timetableList.append(line[4]) # 출발 분
+                                    timetableList.append(line[7]) # 도착 시간
+                                    timetableList.append(line[8]) # 도착 분
+                                    timetableList.append(busType) # 버스 타입(시외, 고속)
                                     break
 
                 except:
-                    print('no directory... addweight += 7000... 사용불가노선')
-                    addweight += 7000
+                    print('no directory... addweight += 7000... 사용불가노선') # 폴더를 찾지 못하는 경우
+                    addweight += 7000 # 노선에서 제외
                     routeindex += 1
                     break
 
-            if item[0]+addweight < 7000:
+            if item[0]+addweight < 7000: # 전체 가중치가 7000 보다 작은경우
                 itemPass = 0
                 route.append(item[0]+addweight)
                 for val in item:
@@ -221,7 +217,7 @@ while(exitcode == 1):
                 route.append(timetableList)
                 modifiedResult.append(route)
 
-        else:
+        else: # 노선이 직통으로 있는 경우
             try:
                 csvheaderPass = 0
                 addweight = 0
@@ -234,13 +230,14 @@ while(exitcode == 1):
                     f2 = open('src/data/exp_each/'+item[routeindex]+'/'+item[routeindex+1]+'_TimeTable.csv','r+')
                     busType = '고속'
 
-                rdr = csv.reader(f)
-                rdr2 = csv.reader(f2)
+                rdr = csv.reader(f) # csv 파일의 eof 를 판단하기 위한 reader
                 listcsv = list(rdr)
                 csvindex = len(listcsv) 
                 
+                rdr2 = csv.reader(f2) # 파일 읽기를 위한 reader
+                
                 if csvindex < 2:
-                    print('no timetable')
+                    print('no timetable') # 헤더만 있는경우 추가가중치를 고의적으로 많이줘서 탈락시키기
                     print(item[routeindex]+','+item[routeindex+1])
                     addweight += 7000
 
@@ -249,13 +246,11 @@ while(exitcode == 1):
                         csvheaderPass += 1
                     else:
                         if int(line[3]) > nowHour or (int(line[3]) ==  nowHour and int(line[4]) > nowMin):
-                            arrHour = int(line[7])
-                            arrMin = int(line[8])
-                            timetableList.append(line[3])
-                            timetableList.append(line[4])
-                            timetableList.append(line[7])
-                            timetableList.append(line[8]) 
-                            timetableList.append(busType)
+                            timetableList.append(line[3]) # 출발 시간
+                            timetableList.append(line[4]) # 출발 분
+                            timetableList.append(line[7]) # 도착 시간
+                            timetableList.append(line[8]) # 도착 분
+                            timetableList.append(busType) # 버스 타입(시외, 고속)
                             break
             except:
                 print('no directory... addweight += 7000... 사용불가노선')
@@ -269,4 +264,4 @@ while(exitcode == 1):
     modifiedResult = sorted(modifiedResult,key=lambda triptime: triptime[0])
     for item in modifiedResult:
         print(item)
-    
+    return modifiedResult
