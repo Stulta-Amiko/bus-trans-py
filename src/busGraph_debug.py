@@ -1,56 +1,10 @@
 import networkx as nx
-import matplotlib.pyplot as plt
 import csv
 import os
-from datetime import datetime
-import time
-
-#절대경로로 디렉토리 전부 바꾸기 
+from src.util import printJson,graph
 
 def trans(depTmn,arrTmn,depHour,depMin):
-    if not (os.path.isdir('/Users/user/Desktop/mern/pyparse/busroute/src/data')):
-        os.makedirs('/Users/user/Desktop/mern/pyparse/busroute/src/data/graph')
-    elif not(os.path.isdir('/Users/user/Desktop/mern/pyparse/busroute/src/data/graph')):
-        os.mkdir('/Users/user/Desktop/mern/pyparse/busroute/src/data/graph')
-
-    if not(os.path.isfile('/Users/user/Desktop/mern/pyparse/busroute/src/data/graph/busGraph.edgelist')):
-        G = nx.Graph() 
-        f = open('/Users/user/Desktop/mern/pyparse/busroute/src/data/Express_Bus_Route_Detailed.csv','r')
-        rdr = csv.reader(f)
-
-        firstPass = 0
-
-        for line in rdr:
-
-            if firstPass == 0:
-                firstPass += 1
-            else:
-                G.add_edge(line[2],line[4],weight=int(line[5]),relation='express')  
-
-
-        f = open('/Users/user/Desktop/mern/pyparse/busroute/src/data/Intercity_Bus_Route_Detailed.csv','r')
-        rdr = csv.reader(f)
-        
-        firstPass = 0
-
-        for line in rdr:
-
-            if firstPass == 0:
-                firstPass += 1
-            else:
-                G.add_edge(line[2],line[4],weight=int(line[5]),relation='intercity')  
-
-
-        f.close()
-
-        nx.write_weighted_edgelist(G,'/Users/user/Desktop/mern/pyparse/busroute/src/data/graph/busGraph.edgelist')
-    else:
-        G = nx.read_weighted_edgelist('/Users/user/Desktop/mern/pyparse/busroute/src/data/graph/busGraph.edgelist')
-
-    weight = nx.get_edge_attributes(G, 'weight')
-    relation = nx.get_edge_attributes(G, 'relation')
-
-    exitcode = 1
+    G = graph.makeGraph()
 
     def peek(iterable):
         try:
@@ -58,41 +12,19 @@ def trans(depTmn,arrTmn,depHour,depMin):
         except StopIteration:
             return 0
         return 1
-        
-    def csvlen(reader):
-        csvindex = 0
-        for item in reader:
-            csvindex += 1
-        return csvindex
-
-    #while(exitcode == 1):
-
-    nowHour = depHour#datetime.now.hour
-    nowMin = depMin#datetime.now.minute
-
-    '''
-    if nowHour<10 and nowMin <10:
-        print('출발시간: 0'+str(nowHour)+':0'+str(nowMin))
-    elif nowHour>10 and nowMin<10:
-        print('출발시간: '+str(nowHour)+':'+str(nowMin))
-    else:
-        print('출발시간: '+str(nowHour)+':'+str(nowMin))
-    '''
-
-    cutoff = 0
 
     depart = depTmn
     arrive = arrTmn
 
-    # 터미널 찾는 코드는 이후 데이터베이스로 이관후 거기서 찾아오는 코드 만들 예정 
+    cutoff = 0
+
+    nowHour = depHour
+    nowMin = depMin
 
     simplePath = nx.all_simple_paths(G,depart,arrive,cutoff=cutoff)
-    #print(peek(simplePath))
     while not peek(simplePath):
-        #print(not peek(simplePath))
         if not peek(simplePath):
             cutoff += 1
-            #print(cutoff)
             simplePath = nx.all_simple_paths(G,depart,arrive,cutoff=cutoff)
 
     if cutoff < 2:
@@ -147,19 +79,15 @@ def trans(depTmn,arrTmn,depHour,depMin):
                     csvindex = 0
                     if os.path.isfile('/Users/user/Desktop/mern/pyparse/busroute/src/data/int_each/'+item[routeindex]+'/'+item[routeindex+1]+'_TimeTable.csv'):
                         f = open('/Users/user/Desktop/mern/pyparse/busroute/src/data/int_each/'+item[routeindex]+'/'+item[routeindex+1]+'_TimeTable.csv','r+')
-                        f2 = open('/Users/user/Desktop/mern/pyparse/busroute/src/data/int_each/'+item[routeindex]+'/'+item[routeindex+1]+'_TimeTable.csv','r+')
                         busType = '시외'
                     else:
                         f = open('/Users/user/Desktop/mern/pyparse/busroute/src/data/exp_each/'+item[routeindex]+'/'+item[routeindex+1]+'_TimeTable.csv','r+')
-                        f2 = open('/Users/user/Desktop/mern/pyparse/busroute/src/data/exp_each/'+item[routeindex]+'/'+item[routeindex+1]+'_TimeTable.csv','r+')
                         busType = '고속'
 
                     rdr = csv.reader(f) # csv 파일의 eof 를 판단하기 위한 reader
                     listcsv = list(rdr)
                     csvindex = len(listcsv) 
                     
-                    rdr2 = csv.reader(f2) # 파일 읽기를 위한 reader
-
                     if csvindex < 2:
                         #print('no timetable') # 헤더만 있는경우 추가가중치를 고의적으로 많이줘서 탈락시키기
                         #print(item[routeindex]+','+item[routeindex+1])
@@ -230,18 +158,14 @@ def trans(depTmn,arrTmn,depHour,depMin):
                 addweight = 0
                 if os.path.isfile('/Users/user/Desktop/mern/pyparse/busroute/src/data/int_each/'+item[routeindex]+'/'+item[routeindex+1]+'_TimeTable.csv'):
                     f = open('/Users/user/Desktop/mern/pyparse/busroute/src/data/int_each/'+item[routeindex]+'/'+item[routeindex+1]+'_TimeTable.csv','r+')
-                    f2 = open('/Users/user/Desktop/mern/pyparse/busroute/src/data/int_each/'+item[routeindex]+'/'+item[routeindex+1]+'_TimeTable.csv','r+')
                     busType = '시외'
                 else:
                     f = open('/Users/user/Desktop/mern/pyparse/busroute/src/data/exp_each/'+item[routeindex]+'/'+item[routeindex+1]+'_TimeTable.csv','r+')
-                    f2 = open('/Users/user/Desktop/mern/pyparse/busroute/src/data/exp_each/'+item[routeindex]+'/'+item[routeindex+1]+'_TimeTable.csv','r+')
                     busType = '고속'
 
                 rdr = csv.reader(f) # csv 파일의 eof 를 판단하기 위한 reader
                 listcsv = list(rdr)
                 csvindex = len(listcsv) 
-                
-                rdr2 = csv.reader(f2) # 파일 읽기를 위한 reader
                 
                 if csvindex < 2:
                     #print('no timetable') # 헤더만 있는경우 추가가중치를 고의적으로 많이줘서 탈락시키기
@@ -273,56 +197,5 @@ def trans(depTmn,arrTmn,depHour,depMin):
                 modifiedResult.append(route) 
 
     modifiedResult = sorted(modifiedResult,key=lambda triptime: triptime[0])
-    print('{')
-    print('"item": [')
-    for idx,item in enumerate(modifiedResult):
-        if len(item) == 4:
-            print('{')
-            print('"totalTime": '+str(item[0])+',')
-            print('"departTmn": "'+item[1]+'",')
-            print('"arriveTmn": "'+item[2]+'",')
-            print('"timetable": [{')
-            #for time in item[3]:
-            print('"count": 0,')
-            print('"departTmnHour": '+str(item[3][0])+',')
-            print('"departTmnMin": '+str(item[3][1])+',')
-            print('"arriveTmnHour": '+str(item[3][2])+',')
-            print('"arriveTmnMin": '+str(item[3][3])+',')
-            print('"busType": "'+item[3][4]+'"')
-            print('}]')
-            if idx == len(modifiedResult) - 1:
-                print('}')
-            else:
-                print('},')
-        elif len(item) > 4:
-            print('{')
-            print('"totalTime": '+str(item[0])+',')
-            print('"transferTime": '+str(item[len(item)-2])+',')
-            for i in range(1,len(item)-2):
-                if i == 1:
-                    print('"departTmn": "'+item[1]+'",')
-                elif i == len(item)-3:
-                    print('"arriveTmn": "'+item[len(item)-3]+'",')
-                else:
-                    print('"layoverTmn'+str(i-1)+'": "'+item[i]+'",')
-            print('"item": [')
-            for i in range(0,int((len(item[len(item)-1]))/5)):
-                print('{')
-                print('"count": '+str(i)+',')
-                print('"departTmnHour": '+str(item[len(item)-1][i*5])+',')
-                print('"departTmnMin": '+str(item[len(item)-1][i*5+1])+',')
-                print('"arriveTmnHour": '+str(item[len(item)-1][i*5+2])+',')
-                print('"arriveTmnMin": '+str(item[len(item)-1][i*5+3])+',')
-                print('"busType": "'+item[len(item)-1][i*5+4]+'"')
-                if i == (len(item[len(item)-1]))/5 - 1:
-                    print('}')
-                else:
-                    print('},')
-            print(']')
-            if idx == len(modifiedResult) - 1:
-                print('}')
-            else:
-                print('},')
-    print(']')
-    print('}')
+    printJson.printJson(modifiedResult)
     return ''

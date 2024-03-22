@@ -1,0 +1,208 @@
+{
+    "item": [{
+            "totalTime": 235,
+            "departTmn": "동서울",
+            "arriveTmn": "울진",
+            "timetable": [{
+                "count": 0,
+                "departTmnHour": 9,
+                "departTmnMin": 35,
+                "arriveTmnHour": 13,
+                "arriveTmnMin": 30,
+                "busType": "시외"
+            }]
+        },
+        {
+            "totalTime": 278,
+            "transferTime": 4,
+            "departTmn": "동서울",
+            "layoverTmn1": "강릉",
+            "arriveTmn": "울진",
+            "item": [{
+                    "count": 0,
+                    "departTmnHour": 6,
+                    "departTmnMin": 50,
+                    "arriveTmnHour": 9,
+                    "arriveTmnMin": 10,
+                    "busType": "고속"
+                },
+                {
+                    "count": 1,
+                    "departTmnHour": 9,
+                    "departTmnMin": 16,
+                    "arriveTmnHour": 11,
+                    "arriveTmnMin": 22,
+                    "busType": "시외"
+                }
+            ]
+        },
+        {
+            "totalTime": 287,
+            "transferTime": 4,
+            "departTmn": "동서울",
+            "layoverTmn1": "태백",
+            "arriveTmn": "울진",
+            "item": [{
+                    "count": 0,
+                    "departTmnHour": 6,
+                    "departTmnMin": 0,
+                    "arriveTmnHour": 9,
+                    "arriveTmnMin": 10,
+                    "busType": "시외"
+                },
+                {
+                    "count": 1,
+                    "departTmnHour": 9,
+                    "departTmnMin": 20,
+                    "arriveTmnHour": 10,
+                    "arriveTmnMin": 36,
+                    "busType": "시외"
+                }
+            ]
+        },
+        {
+            "totalTime": 401,
+            "transferTime": 4,
+            "departTmn": "동서울",
+            "layoverTmn1": "동대구",
+            "arriveTmn": "울진",
+            "item": [{
+                    "count": 0,
+                    "departTmnHour": 6,
+                    "departTmnMin": 0,
+                    "arriveTmnHour": 9,
+                    "arriveTmnMin": 30,
+                    "busType": "고속"
+                },
+                {
+                    "count": 1,
+                    "departTmnHour": 9,
+                    "departTmnMin": 40,
+                    "arriveTmnHour": 12,
+                    "arriveTmnMin": 41,
+                    "busType": "시외"
+                }
+            ]
+        },
+        {
+            "totalTime": 486,
+            "transferTime": 4,
+            "departTmn": "동서울",
+            "layoverTmn1": "포항",
+            "arriveTmn": "울진",
+            "item": [{
+                    "count": 0,
+                    "departTmnHour": 7,
+                    "departTmnMin": 0,
+                    "arriveTmnHour": 11,
+                    "arriveTmnMin": 30,
+                    "busType": "시외"
+                },
+                {
+                    "count": 1,
+                    "departTmnHour": 12,
+                    "departTmnMin": 0,
+                    "arriveTmnHour": 15,
+                    "arriveTmnMin": 28,
+                    "busType": "시외"
+                }
+            ]
+        },
+        {
+            "totalTime": 512,
+            "transferTime": 4,
+            "departTmn": "동서울",
+            "layoverTmn1": "울산",
+            "arriveTmn": "울진",
+            "item": [{
+                    "count": 0,
+                    "departTmnHour": 6,
+                    "departTmnMin": 40,
+                    "arriveTmnHour": 11,
+                    "arriveTmnMin": 0,
+                    "busType": "시외"
+                },
+                {
+                    "count": 1,
+                    "departTmnHour": 11,
+                    "departTmnMin": 45,
+                    "arriveTmnHour": 14,
+                    "arriveTmnMin": 53,
+                    "busType": "시외"
+                }
+            ]
+        },
+        {
+            "totalTime": 770,
+            "transferTime": 4,
+            "departTmn": "동서울",
+            "layoverTmn1": "인천",
+            "arriveTmn": "울진",
+            "item": [{
+                    "count": 0,
+                    "departTmnHour": 7,
+                    "departTmnMin": 20,
+                    "arriveTmnHour": 8,
+                    "arriveTmnMin": 30,
+                    "busType": "시외"
+                },
+                {
+                    "count": 1,
+                    "departTmnHour": 11,
+                    "departTmnMin": 40,
+                    "arriveTmnHour": 20,
+                    "arriveTmnMin": 15,
+                    "busType": "시외"
+                }
+            ]
+        },
+        {
+            "totalTime": 780,
+            "transferTime": 4,
+            "departTmn": "동서울",
+            "layoverTmn1": "구미",
+            "arriveTmn": "울진",
+            "item": [{
+                    "count": 0,
+                    "departTmnHour": 7,
+                    "departTmnMin": 0,
+                    "arriveTmnHour": 9,
+                    "arriveTmnMin": 50,
+                    "busType": "시외"
+                },
+                {
+                    "count": 1,
+                    "departTmnHour": 15,
+                    "departTmnMin": 25,
+                    "arriveTmnHour": 19,
+                    "arriveTmnMin": 22,
+                    "busType": "시외"
+                }
+            ]
+        },
+        {
+            "totalTime": 793,
+            "transferTime": 4,
+            "departTmn": "동서울",
+            "layoverTmn1": "안동",
+            "arriveTmn": "울진",
+            "item": [{
+                    "count": 0,
+                    "departTmnHour": 7,
+                    "departTmnMin": 0,
+                    "arriveTmnHour": 9,
+                    "arriveTmnMin": 50,
+                    "busType": "시외"
+                },
+                {
+                    "count": 1,
+                    "departTmnHour": 17,
+                    "departTmnMin": 55,
+                    "arriveTmnHour": 19,
+                    "arriveTmnMin": 59,
+                    "busType": "시외"
+                }
+            ]
+        }
+    ]
+}
